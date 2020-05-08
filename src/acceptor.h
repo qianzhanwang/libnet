@@ -4,11 +4,13 @@
 
 class Acceptor : public EpollUserData
 {
-private:
-    /* data */
 public:
     Acceptor();
     virtual ~Acceptor();
+    virtual void Handle(int nEvent);
+
+private:
+    /* data */
 };
 
 

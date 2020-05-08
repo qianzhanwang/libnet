@@ -8,6 +8,7 @@ class Connector : public EpollUserData
 public:
     Connector();
     virtual ~Connector();
+    virtual void Handle(int nEvent);
 
 private:
     /* data */

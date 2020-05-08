@@ -10,3 +10,8 @@ Connector::~Connector()
 {
 
 }
+
+void Connector::Handle(int nEvent)
+{
+
+}

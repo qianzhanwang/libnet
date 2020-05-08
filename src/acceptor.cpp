@@ -8,3 +8,8 @@ Acceptor::Acceptor(/* args */)
 Acceptor::~Acceptor()
 {
 }
+
+void Acceptor::Handle(int nEvent)
+{
+
+}
