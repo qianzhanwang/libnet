@@ -17,9 +17,20 @@ public:
 
     EDataType GetType(){return m_etype;};
     virtual void Handle(int nEvent) = 0;
+    virtual int GetFd() = 0;
 
 private:
     EDataType m_etype;
 };
+
+typedef std::shared_ptr<EpollUserData> EpollUserDataPtr;
+
+class INetEvent
+{
+public:
+    INetEvent() = default;
+    virtual ~INetEvent() = default;
+    virtual OnAccept(int fd) = 0;
+}
 
 #endif // __COMMON_H__

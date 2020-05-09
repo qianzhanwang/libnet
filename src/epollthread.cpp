@@ -97,5 +97,64 @@ void EpollThrad::SetNoBlock(int fd)
 
 void EpollThrad::HandleCmd(int num)
 {
+    std::vector<EpollCmdPtr> tmp;
+    std::unique_lock<std::mutex> ul(m_mtCmds);
+    for (size_t i = 0; i < num; i++)
+    {
+        if (m_cmds.empty()) 
+        {
+            break;
+        }
 
+        tmp.push_back(m_cmds.pop());
+    }
+    ul.unlock();
+
+    for (size_t i = 0; i < tmp.size(); i++)
+    {
+        EpollCmdPtr& cmd = tmp[i];
+        int fd = cmd->m_pData->GetFd();
+        cmd->m_ev.data.ptr = (void*)cmd->m_pData.get();
+
+        switch (cmd->m_etype )
+        {
+        case EpollCmd::et_listen_add: 
+        case EpollCmd::et_connect_add:
+        {
+            int ret = epoll_ctl(m_nEpollfd,EPOLL_CTL_ADD,fd,&cmd->m_ev);
+            if (ret == -1)
+            {
+                // errno
+                assert(false);
+            }
+        } 
+        break;
+        
+        case EpollCmd::et_listen_sub:
+        case EpollCmd::et_connect_sub:
+        {
+            int ret = epoll_ctl(m_nEpollfd,EPOLL_CTL_DEL,fd,&cmd->m_ev);
+            if (ret == -1 )
+            {
+                // errno
+                assert(false);
+            }
+        } 
+        break;
+
+        default:
+            assert(false);
+            break;
+        }
+    }
+}
+
+bool EpollThrad::AddCmd(EpollCmd& cmd)
+{
+    std::unique_lock<std::mutex> ul(m_mtCmds);
+    m_cmds.push(cmd);
+    ul.unlock();
+
+    m_ctrl.OnPush();
+    return true;
 }

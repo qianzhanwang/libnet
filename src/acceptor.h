@@ -8,9 +8,13 @@ public:
     Acceptor();
     virtual ~Acceptor();
     virtual void Handle(int nEvent);
+    virtual int GetFd(){return m_fd;};
+
+    bool Start(int port, int max);
+    bool Close();
 
 private:
-    /* data */
+    int m_fd;
 };
 
 

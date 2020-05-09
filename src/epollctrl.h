@@ -13,7 +13,9 @@ public:
     bool Release();
     int ReadFd(){return m_nfds[0];};
     int WriteFd(){return m_nfds[1];};
+    virtual int GetFd() {return WriteFd();};
     virtual void Handle(int nEvent) ;
+    int OnPush();
 
 private:
     int m_nfds[2];

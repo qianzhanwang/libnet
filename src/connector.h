@@ -9,9 +9,10 @@ public:
     Connector();
     virtual ~Connector();
     virtual void Handle(int nEvent);
+    virtual int GetFd() {return m_fd;};
 
 private:
-    /* data */
+    int m_fd;
 };
 
 
