@@ -1,11 +1,15 @@
 #include "acceptor.h"
 #include <sys/socket.h>
 
-Acceptor::Acceptor()
+Acceptor::Acceptor(std::uint32_t index,FunOnAccept cb, INetEvent* net)
     : EpollUserData(EpollUserData::et_acceptor)
     , m_fd(0)
+    , m_cb(cb)
+    , m_iNetOwner(net)
+    , m_index(index)
 {
-
+    assert(net != nullptr);
+    assert(index > 0);
 }
 
 Acceptor::~Acceptor()
@@ -39,7 +43,11 @@ void Acceptor::Handle(int nEvent)
             // error
             return; 
         }
-        
+
+        if (m_cb)
+        {
+            m_cb(fd, m_iNetOwner);
+        }
         return;
     } while (true);
     
